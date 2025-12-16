@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chatbot Prompts for Antigravity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prompt-card {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .prompt-title {
+            font-size: 1.4em;
+            color: #2d3748;
+            font-weight: 700;
+        }
+
+        .copy-btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copied {
+            background: #48bb78 !important;
+        }
+
+        .prompt-description {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .prompt-text {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .prompt-text::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .prompt-text::-webkit-scrollbar-track {
+            background: #1a202c;
+            border-radius: 4px;
+        }
+
+        .prompt-text::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag.difficulty {
+            background: #f56565;
+        }
+
+        .tag.time {
+            background: #48bb78;
+        }
+
+        .tag.priority {
+            background: #ed8936;
+        }
+
+        .info-box {
+            background: #ebf8ff;
+            border-left: 5px solid #4299e1;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: #2c5282;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #2d3748;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+        }
+
+        .workflow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .workflow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .workflow-step h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .download-section {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-top: 50px;
+            border-radius: 12px;
+        }
+
+        .download-btn {
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .nav, .copy-btn, .download-section {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 RAG Chatbot Implementation Guide</h1>
+            <p>Comprehensive Prompts for Google Antigravity Development Platform</p>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn" onclick="scrollToSection('core')">Core System</button>
+            <button class="nav-btn" onclick="scrollToSection('domain')">Domain-Specific</button>
+            <button class="nav-btn" onclick="scrollToSection('testing')">Testing</button>
+            <button class="nav-btn" onclick="scrollToSection('workflow')">Workflow</button>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <h3>📘 How to Use These Prompts</h3>
+                <ul>
+                    <li>Copy any prompt using the "Copy" button</li>
+                    <li>Paste into Google Antigravity's "New Task" or Agent Manager</li>
+                    <li>The agent will autonomously plan, code, test, and verify the implementation</li>
+                    <li>Start with Core System prompts, then add Domain-Specific features</li>
+                    <li>Use "Plan Mode" in Antigravity for complex tasks</li>
+                </ul>
+            </div>
+
+            <section id="core" class="section">
+                <h2 class="section-title">
+                    <span>⚙️</span> Core RAG System Prompts
+                </h2>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">1. Advanced Chunking Strategies</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt1')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Implement 8 different chunking strategies with benchmarking and testing capabilities.
+                    </div>
+                    <div class="tags">
+                        <span class="tag difficulty">Difficulty: Medium</span>
+                        <span class="tag time">Time: 2-3 hours</span>
+                        <span class="tag priority">Priority: High</span>
+                    </div>
+                    <div class="prompt-text" id="prompt1">Task: Implement a comprehensive document chunking system for my RAG chatbot
+
+Requirements:
+1. Create a Python module 'chunking_strategies.py' with these functions:
+   - fixed_size_chunker(text, size=500, overlap=50)
+   - sentence_based_chunker(text, sentences_per_chunk=5)
+   - paragraph_based_chunker(text, min_length=100)
+   - section_heading_chunker(text) # detects markdown/HTML headings
+   - recursive_chunker(text, max_size=1000)
+   - semantic_chunker(text, embedding_model) # using sentence transformers
+   - sliding_window_chunker(text, window_size=400, stride=200)
+   - metadata_aware_chunker(text, metadata_dict)
+   
+2. Create a ChunkingStrategy enum and factory pattern
+3. Add comprehensive unit tests for each strategy
+4. Include benchmarking scripts to compare strategies
+5. Add documentation with use case recommendations
+
+File formats to support: PDF, DOCX, TXT, CSV, Excel
+Use libraries: langchain, PyPDF2, python-docx, pandas, sentence-transformers
+
+Verify the implementation works with sample documents from multiple domains (HR policies, medical protocols, legal contracts).</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">2. Multi-Document Query Handler</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt2')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Build a system that retrieves and synthesizes information across multiple documents and file types.
+                    </div>
+                    <div class="tags">
+                        <span class="tag difficulty">Difficulty: Hard</span>
+                        <span class="tag time">Time: 4-5 hours</span>
+                        <span class="tag priority">Priority: High</span>
+                    </div>
+                    <div class="prompt-text" id="prompt2">Task: Build a multi-document query system that can retrieve and synthesize information across different file types
+
+Requirements:
+1. Create 'multi_doc_retriever.py' with:
+   - DocumentLoader class supporting PDF, DOCX, Excel, CSV, TXT
+   - VectorStore integration (Pinecone/ChromaDB/FAISS)
+   - CrossDocumentRetriever that can:
+     * Query multiple documents simultaneously
+     * Rank results across documents
+     * Attribute sources with document name + page/section
+     * Handle conflicting information from different sources
+   
+2. Implement query routing based on:
+   - Query intent classification (comparison, factual, procedural)
+   - Document type detection
+   - Metadata filtering (date, department, version)
+   
+3. Create response synthesis pipeline that:
+   - Merges information from multiple chunks
+   - Maintains source citations
+   - Handles contradictions gracefully
+   
+4. Add caching layer for frequently asked questions
+
+5. Test with:
+   - HR policies (3+ documents)
+   - Medical protocols (5+ documents)
+   - Legal contracts (mixed formats)
+
+Include example queries like "Compare leave policies across employee levels" and "What are common requirements across all vendor contracts?"</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">3. Persona-Based Chatbot System</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt3')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Create role-specific chatbots with customized responses, access control, and UI.
+                    </div>
+                    <div class="tags">
+                        <span class="tag difficulty">Difficulty: Medium</span>
+                        <span class="tag time">Time: 3-4 hours</span>
+                        <span class="tag priority">Priority: Medium</span>
+                    </div>
+                    <div class="prompt-text" id="prompt3">Task: Create a persona-based RAG chatbot system with role-specific response customization
+
+Requirements:
+1. Build 'persona_manager.py' with:
+   - Persona class defining: role, tone, allowed_documents, response_style
+   - Predefined personas:
+     * HR_Assistant: friendly, policy-focused, employee-facing
+     * Legal_Advisor: formal, citation-heavy, precise
+     * Medical_Guide: empathetic, safety-conscious, protocol-driven
+     * Technical_Support: step-by-step, troubleshooting-focused
+   
+2. Create dynamic system prompt generator per persona
+3. Implement document access control based on role
+4. Add response formatting templates per persona type
+5. Build persona-switching mechanism in conversation
+
+6. Create 'chatbot_interface.py' with:
+   - Streamlit UI with persona selector
+   - Document upload interface (multi-file drag-drop)
+   - Chat history with source citations
+   - Query intent detection and clarification
+   
+7. Test scenarios:
+   - Employee asking HR bot about leave policy
+   - Doctor querying medical protocol bot
+   - Sales rep using product knowledge bot
+   
+Include confidence scoring and "I don't know" responses when information isn't in documents.</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">4. Excel & CSV Data Query System</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt4')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Handle structured data queries with SQL-like natural language translation and visualization.
+                    </div>
+                    <div class="tags">
+                        <span class="tag difficulty">Difficulty: Medium</span>
+                        <span class="tag time">Time: 3-4 hours</span>
+                        <span class="tag priority">Priority: Medium</span>
+                    </div>
+                    <div class="prompt-text" id="prompt4">Task: Build intelligent Excel and CSV query handler for structured data in RAG system
+
+Requirements:
+1. Create 'structured_data_handler.py':
+   - Excel sheet parser with multi-sheet support
+   - CSV reader with automatic delimiter detection
+   - Table structure detection (headers, data types)
+   - Convert tables to natural language descriptions for embeddings
+   
+2. Implement SQL-like query translator:
+   - Convert natural language to pandas operations
+   - Handle aggregations (sum, average, count, group by)
+   - Support filtering and sorting operations
+   - Join operations across multiple files
+   
+3. Build hybrid retrieval:
+   - Vector search for unstructured content
+   - Direct table lookup for structured queries
+   - Combined results for complex questions
+   
+4. Create visualization capabilities:
+   - Auto-generate charts for numerical queries
+   - Table formatting for comparison queries
+   
+5. Test scenarios:
+   - "What's the average salary by department?" (from Excel)
+   - "Show all employees with >10 days leave balance" (CSV)
+   - "Compare Q3 vs Q4 sales across regions" (multiple sheets)
+   
+Support file formats: XLSX, XLS, CSV, TSV
+Include error handling for malformed data</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">5. Complete End-to-End RAG System</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt5')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Production-ready system integrating all features with UI, API, and deployment configurations.
+                    </div>
+                    <div class="tags">
+                        <span class="tag difficulty">Difficulty: Expert</span>
+                        <span class="tag time">Time: 8-10 hours</span>
+                        <span class="tag priority">Priority: High</span>
+                    </div>
+                    <div class="prompt-text" id="prompt5">Task: Build production-ready RAG chatbot with all advanced features integrated
+
+Requirements:
+1. Architecture components:
+   - Document ingestion pipeline (all file types)
+   - Intelligent chunking router (selects best strategy per document)
+   - Vector database with metadata filtering
+   - Retrieval system with re-ranking
+   - Response generation with citations
+   - Caching layer for performance
+   
+2. Advanced features:
+   - Multi-document query synthesis
+   - Persona-based response customization
+   - Query intent classification
+   - Automatic query expansion
+   - Confidence scoring
+   - Source attribution with page numbers
+   - Conflict resolution between sources
+   
+3. User interface (Streamlit or Gradio):
+   - Document management (upload, view, delete)
+   - Persona selector
+   - Chat interface with message history
+   - Source highlighting (show relevant chunks)
+   - Feedback mechanism (thumbs up/down)
+   - Analytics dashboard (popular queries, accuracy metrics)
+   
+4. Backend API (FastAPI):
+   - /upload endpoint (multi-file)
+   - /query endpoint (with persona parameter)
+   - /feedback endpoint
+   - /analytics endpoint
+   
+5. Configuration system:
+   - YAML config for chunking strategies
+   - Environment variables for API keys
+   - Model selection (OpenAI, Anthropic, local)
+   - Persona definitions in JSON
+   
+6. Testing & evaluation:
+   - Create test dataset with ground truth answers
+   - Implement evaluation metrics (accuracy, relevance)
+   - Load testing for concurrent users
+   - Error handling and logging
+   
+Deploy with Docker and include comprehensive README with setup instructions.</div>
+                </div>
+            </section>
+
+            <section id="domain" class="section">
+                <h2 class="section-title">
+                    <span>🎯</span> Domain-Specific Implementation Prompts
+                </h2>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">6. HR Employee Services Bot</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt6')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Specialized HR assistant for employee policies, benefits, and calculations.
+                    </div>
+                    <div class="tags">
+                        <span class="tag">HR</span>
+                        <span class="tag">Employee Services</span>
+                        <span class="tag difficulty">Difficulty: Medium</span>
+                        <span class="tag time">Time: 3-4 hours</span>
+                    </div>
+                    <div class="prompt-text" id="prompt6">Task: Build specialized HR chatbot for employee policy queries
+
+Create a complete HR document assistant with:
+1. Document preprocessing for HR policies, handbooks, benefits docs
+2. Employee-friendly response tone and formatting
+3. Special features:
+   - Leave balance calculations
+   - Benefits comparison tables
+   - Onboarding checklist generation
+   - Multi-policy comparison ("Compare policies for Level 2 vs Level 3")
+4. Privacy controls (role-based document access)
+5. Integration points for HRMS data (employee grade, department)
+
+Include sample HR documents and 50+ test queries covering:
+- Leave policies, benefits, expense reimbursement, WFH policy
+- Compare and calculate scenarios
+
+Build Streamlit interface with employee login simulation.</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">7. Healthcare Document Assistant</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt7')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        HIPAA-compliant medical protocol bot with safety features and emergency retrieval.
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Healthcare</span>
+                        <span class="tag">Medical</span>
+                        <span class="tag difficulty">Difficulty: Hard</span>
+                        <span class="tag time">Time: 5-6 hours</span>
+                    </div>
+                    <div class="prompt-text" id="prompt7">Task: Build a HIPAA-compliant healthcare document assistant for hospital policies
+
+Requirements:
+1. Create specialized medical document processing:
+   - Extract tables from medication charts (Excel/PDF)
+   - Parse protocol steps with section numbering
+   - Handle medical terminology and abbreviations
+   - Emergency protocol fast retrieval (<2 second response)
+   
+2. Implement safety features:
+   - Medication dosage verification with confidence scores
+   - Protocol version tracking (always use latest)
+   - Critical alert highlighting for contraindications
+   - Audit logging for all queries
+   
+3. Document types to handle:
+   - Clinical protocols (PDF with sections)
+   - Medication charts (Excel with dosage tables)
+   - Patient safety guidelines (DOCX)
+   - Emergency procedures (quick reference cards)
+   
+4. Build specialized features:
+   - Step-by-step protocol walkthroughs
+   - Medication interaction checking across documents
+   - Protocol comparison (old vs new versions)
+   - Patient education content generation (simplified language)
+   
+5. Use sliding window chunking for medical protocols to prevent context loss
+
+Test with queries like:
+- "What's the cardiac arrest protocol in ICU?"
+- "Show medication dosage for [drug] in diabetic patients"
+- "Compare pre-op protocols for surgeries"</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">8. Legal Contract Analysis System</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt8')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Contract review bot with clause extraction, risk analysis, and comparison features.
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Legal</span>
+                        <span class="tag">Contracts</span>
+                        <span class="tag difficulty">Difficulty: Hard</span>
+                        <span class="tag time">Time: 4-5 hours</span>
+                    </div>
+                    <div class="prompt-text" id="prompt8">Task: Create legal document analysis chatbot for contract review
+
+Build specialized system for legal documents:
+1. Section-based chunking preserving legal clause structure
+2. Features:
+   - Multi-contract comparison (terms, obligations, risks)
+   - Clause extraction by type (termination, liability, payment)
+   - Risk highlighting (unfavorable terms)
+   - Template compliance checking
+3. Citation system with section/clause references
+4. Export capability (findings report as PDF/DOCX)
+
+Test with vendor contracts, NDAs, employment agreements.
+Include queries like:
+- "Find all liability caps below $1M"
+- "Compare payment terms across all 2024 contracts"
+- "What are termination notice periods?"</div>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">9. Technical Documentation Assistant</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt9')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Developer-focused bot for code documentation and API references with syntax preservation.
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Technical</span>
+                        <span class="tag">API</span>
+                        <span class="tag difficulty">Difficulty: Medium</span>
+                        <span class="tag time">Time: 3-4 hours</span>
+                    </div>
+                    <div class="prompt-text" id="prompt9">Task: Build code documentation and API reference chatbot
+
+Create developer-focused documentation bot:
+1. Code-aware chunking (preserve function/class boundaries)
+2. Support for: Markdown, code files (.py, .js), API specs (OpenAPI/Swagger)
+3. Features:
+   - Code example extraction
+   - API endpoint search with parameters
+   - Function signature lookup
+   - Architecture diagram text parsing
+4. Response formatting with syntax highlighting
+5. Integration with code repository structure
+
+Test with open-source project documentation (Django, React, FastAPI).</div>
+                </div>
+            </section>
+
+            <section id="testing" class="section">
+                <h2 class="section-title">
+                    <span>🧪</span> Testing & Optimization Prompts
+                </h2>
+
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">10. RAG Evaluation Framework</div>
+                        <button class="copy-btn" onclick="copyPrompt(this, 'prompt10')">📋 Copy</button>
+                    </div>
+                    <div class="prompt-description">
+                        Comprehensive testing system with metrics, benchmarking, and automated evaluation.
+                    </div>
+                    <div class="tags">
+                        <span class="tag">Testing</span>
+                        <span class="tag">Quality Assurance</span>
+                        <span class="tag difficulty">Difficulty: Medium</span>
+                        <span class="tag time">Time: 3-4 hours</span>
+                    </div>
+                    <div class="prompt-text" id="prompt10">Task: Create comprehensive RAG evaluation and testing framework
+
+Build testing system:
+1. Generate synthetic test dataset:
+   - 100+ question-answer pairs per use case
+   - Include: simple facts, multi-doc queries, comparisons, calculations
+   
+2. Implement evaluation metrics:
+   - Answer accuracy (exact match, semantic similarity)
+   - Retrieval precision/recall
+   - Response latency
+   - Source attribution accuracy
+   
+3. Create benchmarking suite:
+   - Compare different chunking strategies
+   - Test various embedding models
+   - Evaluate retrieval methods (similarity, MMR, contextual compression)
+   
+4. Build dashboard showing:
+   - Accuracy by query type
+   - Failed queries analysis
+   - Performance bottlenecks
+   
+5. Automated testing pipeline with CI/CD integration</div>
+                </div>
+            </section>
+
+            <section id="workflow" class="section">
+                <h2 class="section-title">
+                    <span>📋</span> Recommended Implementation Workflow
+                </h2>
+
+                <div class="workflow">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <h4>Foundation</h4>
+                        <p>Start with Prompt #1 (Chunking) and #2 (Multi-Document) to build core capabilities</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <h4>Customize</h4>
+                        <p>Choose domain-specific prompt (#6-9) based on your use case</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <h4>Enhance</h4>
+                        <p>Add Persona system (#3) and Excel handler (#4) for advanced features</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <h4>Validate</h4>
+                        <p>Implement testing framework (#10) to ensure quality</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <h4>Deploy</h4>
+                        <p>Integrate everything with Prompt #5 for production-ready system</p>
+                    </div>
+                </div>
+
+                <div class="info-box" style="background: #fff5f5; border-color: #fc8181;">
+                    <h3>💡 Pro Tips for Antigravity</h3>
+                    <ul>
+                        <li><strong>Use "Plan Mode":</strong> For complex prompts, let the agent create a detailed plan first</li>
+                        <li><strong>Iterate Incrementally:</strong> Complete one prompt fully before moving to the next</li>
+                        <li><strong>Review

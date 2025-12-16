@@ -46,6 +46,7 @@ models/
 *.pdf
 *.docx
 *.txt
+!requirements.txt
 frontend/.vite/
 frontend/dist/
 frontend/build/

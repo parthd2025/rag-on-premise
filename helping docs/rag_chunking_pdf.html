@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chunking Strategies</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .download-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .download-btn:active {
+            transform: translateY(0);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #5a67d8;
+        }
+        td {
+            padding: 12px 10px;
+            border: 1px solid #e2e8f0;
+            line-height: 1.6;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+        tr:hover {
+            background-color: #edf2f7;
+        }
+        .chunking-type {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .example {
+            font-style: italic;
+            color: #4a5568;
+            font-size: 13px;
+        }
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            color: #48bb78;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .status.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 RAG Chunking Strategies Reference</h1>
+        <p class="subtitle">Comprehensive guide to text chunking methods for Retrieval-Augmented Generation systems</p>
+        
+        <button class="download-btn" onclick="generatePDF()">⬇️ Download as PDF</button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%">Chunking Type</th>
+                    <th style="width: 18%">How It Works</th>
+                    <th style="width: 15%">Preferred Scenario</th>
+                    <th style="width: 20%">Example Chunk</th>
+                    <th style="width: 16%">Advantages</th>
+                    <th style="width: 16%">Limitations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="chunking-type">Fixed-size (Token/Character)</td>
+                    <td>Splits text into fixed-length token/character blocks with overlap</td>
+                    <td>MVPs, unstructured data, scraped text</td>
+                    <td class="example">Tokens 0–500 of document, regardless of sentence boundaries</td>
+                    <td>Simple, fast, predictable</td>
+                    <td>Breaks sentences, weak semantic boundaries</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Sentence-based</td>
+                    <td>Groups N consecutive sentences into one chunk</td>
+                    <td>Articles, blogs, QA systems</td>
+                    <td class="example">"RAG improves LLM accuracy. It retrieves external data. This data is embedded…"</td>
+                    <td>Preserves meaning</td>
+                    <td>Variable chunk length</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Paragraph-based</td>
+                    <td>Each paragraph is a chunk (merged if too short)</td>
+                    <td>Manuals, policies, KB docs</td>
+                    <td class="example">Single paragraph explaining a concept or rule</td>
+                    <td>High semantic coherence</td>
+                    <td>Paragraphs may be uneven</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Section / Heading-based</td>
+                    <td>Uses headings and subheadings to define chunks</td>
+                    <td>Technical docs, legal texts</td>
+                    <td class="example">Section: "3.2 Authentication Mechanisms" + all its content</td>
+                    <td>Strong contextual relevance</td>
+                    <td>Sections may be large</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Recursive (Hierarchical)</td>
+                    <td>Tries section → paragraph → sentence → token splits</td>
+                    <td>Mixed or noisy documents</td>
+                    <td class="example">Large section split into multiple paragraph-level chunks</td>
+                    <td>Robust, production-safe</td>
+                    <td>Implementation complexity</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Semantic Chunking</td>
+                    <td>Uses embedding similarity to split on topic changes</td>
+                    <td>Research papers, long narratives</td>
+                    <td class="example">Split occurs where topic shifts from "Indexing" to "Retrieval"</td>
+                    <td>Best semantic integrity</td>
+                    <td>Expensive, slower ingestion</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Sliding Window</td>
+                    <td>Overlapping windows slide across text</td>
+                    <td>Legal, medical, reasoning-heavy QA</td>
+                    <td class="example">Tokens 0–400, 200–600, 400–800</td>
+                    <td>Prevents context loss</td>
+                    <td>Duplicate embeddings</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Metadata-aware</td>
+                    <td>Adds metadata fields to chunks</td>
+                    <td>Enterprise search systems</td>
+                    <td class="example">Chunk + {doc=Policy.pdf, section=Leave Policy}</td>
+                    <td>Better filtering</td>
+                    <td>Requires clean metadata</td>
+                </tr>
+                <tr>
+                    <td class="chunking-type">Code-aware</td>
+                    <td>Splits by functions, classes, methods</td>
+                    <td>Code search, dev assistants</td>
+                    <td class="example">Entire Python function or Java class</td>
+                    <td>Preserves syntax</td>
+                    <td>Language-specific logic</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.setTextColor(102, 126, 234);
+            doc.text('RAG Chunking Strategies Reference Guide', 148, 15, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Comprehensive guide to text chunking methods for Retrieval-Augmented Generation', 148, 22, { align: 'center' });
+            
+            // Table data
+            const tableData = [
+                ['Fixed-size\n(Token/Character)', 'Splits text into fixed-length token/character blocks with overlap', 'MVPs, unstructured data, scraped text', 'Tokens 0–500 of document, regardless of sentence boundaries', 'Simple, fast, predictable', 'Breaks sentences, weak semantic boundaries'],
+                ['Sentence-based', 'Groups N consecutive sentences into one chunk', 'Articles, blogs, QA systems', '"RAG improves LLM accuracy. It retrieves external data. This data is embedded…"', 'Preserves meaning', 'Variable chunk length'],
+                ['Paragraph-based', 'Each paragraph is a chunk (merged if too short)', 'Manuals, policies, KB docs', 'Single paragraph explaining a concept or rule', 'High semantic coherence', 'Paragraphs may be uneven'],
+                ['Section /\nHeading-based', 'Uses headings and subheadings to define chunks', 'Technical docs, legal texts', 'Section: "3.2 Authentication Mechanisms" + all its content', 'Strong contextual relevance', 'Sections may be large'],
+                ['Recursive\n(Hierarchical)', 'Tries section → paragraph → sentence → token splits', 'Mixed or noisy documents', 'Large section split into multiple paragraph-level chunks', 'Robust, production-safe', 'Implementation complexity'],
+                ['Semantic\nChunking', 'Uses embedding similarity to split on topic changes', 'Research papers, long narratives', 'Split occurs where topic shifts from "Indexing" to "Retrieval"', 'Best semantic integrity', 'Expensive, slower ingestion'],
+                ['Sliding Window', 'Overlapping windows slide across text', 'Legal, medical, reasoning-heavy QA', 'Tokens 0–400, 200–600, 400–800', 'Prevents context loss', 'Duplicate embeddings'],
+                ['Metadata-aware', 'Adds metadata fields to chunks', 'Enterprise search systems', 'Chunk + {doc=Policy.pdf, section=Leave Policy}', 'Better filtering', 'Requires clean metadata'],
+                ['Code-aware', 'Splits by functions, classes, methods', 'Code search, dev assistants', 'Entire Python function or Java class', 'Preserves syntax', 'Language-specific logic']
+            ];
+            
+            // Generate table
+            doc.autoTable({
+                head: [['Chunking Type', 'How It Works', 'Preferred Scenario', 'Example Chunk', 'Advantages', 'Limitations']],
+                body: tableData,
+                startY: 30,
+                theme: 'grid',
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 3,
+                

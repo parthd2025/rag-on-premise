@@ -31,11 +31,11 @@ const ChatPage = () => {
     scrollToBottom()
   }, [messages])
 
-  const handleSend = async () => {
-    if (!inputValue.trim() || isLoading) return
+  const handleSend = async (text) => {
+    const question = typeof text === 'string' ? text : inputValue.trim()
+    if (!question || isLoading) return
 
-    const question = inputValue.trim()
-    setInputValue('')
+    if (typeof text !== 'string') setInputValue('')
     setLoading(true)
 
     // Add user message
@@ -78,8 +78,22 @@ const ChatPage = () => {
   }
 
   const handleUploadSuccess = (result) => {
-    alert(`Document "${result.name}" uploaded successfully! ${result.chunks_created} chunks created.`)
     setUploadRefresh((prev) => prev + 1)
+
+    let content = `Document "${result.name}" uploaded successfully! (${result.chunks_created} chunks).`
+    let suggestions = []
+
+    if (result.valid_questions && result.valid_questions.length > 0) {
+      content += "\n\nI've analyzed the document. Here are some suggested questions:"
+      suggestions = result.valid_questions
+    }
+
+    addMessage({
+      role: 'assistant',
+      content: content,
+      suggestions: suggestions,
+      timestamp: new Date().toISOString(),
+    })
   }
 
   const handleUploadError = (error) => {
@@ -151,7 +165,10 @@ const ChatPage = () => {
 
           {messages.map((message, index) => (
             <div key={index}>
-              <ChatMessage message={message} />
+              <ChatMessage
+                message={message}
+                onSuggestionClick={handleSend}
+              />
               {message.role === 'assistant' &&
                 index === messages.length - 1 &&
                 currentSources.length > 0 && (
@@ -194,7 +211,7 @@ const ChatPage = () => {
               disabled={isLoading}
             />
             <button
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={!inputValue.trim() || isLoading}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >

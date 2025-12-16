@@ -28,7 +28,7 @@ class EmbeddingService:
                 logger.info("Loading embedding model from local path", path=model_path, device=self.device)
                 self.model = SentenceTransformer(model_path, device=self.device)
             else:
-                logger.info("Loading embedding model from Hugging Face", model=self.model_name, device=self.device)
+                logger.info("Loading Search/Embedding Model (not LLM) from Hugging Face", model=self.model_name, device=self.device)
                 self.model = SentenceTransformer(self.model_name, device=self.device)
             
             logger.info("Embedding model loaded successfully")

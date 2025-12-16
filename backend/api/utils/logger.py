@@ -41,11 +41,24 @@ def setup_logging():
         cache_logger_on_first_use=True,
     )
     
+    # Create logs directory
+    import os
+    from pathlib import Path
+    
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / "app.log"
+    
     # Configure standard logging
+    handlers = [
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(log_file, encoding='utf-8')
+    ]
+    
     logging.basicConfig(
         format="%(message)s",
-        stream=sys.stdout,
         level=log_level,
+        handlers=handlers
     )
 
 

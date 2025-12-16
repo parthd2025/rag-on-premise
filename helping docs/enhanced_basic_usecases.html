@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Helper - Enhanced Basic Use Cases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5em;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            font-size: 1.2em;
+            color: #718096;
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .use-case-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .use-case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .persona-section {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .persona-icon {
+            font-size: 2em;
+        }
+
+        .persona-title {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+
+        .persona-roles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .role-tag {
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .approach-section {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .approach-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .approach-content {
+            color: #4a5568;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .features-list {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .features-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .features-list ul {
+            margin-left: 20px;
+            color: #4a5568;
+        }
+
+        .features-list li {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .example-queries {
+            background: #fef5e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .example-queries-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .query {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        .tech-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag {
+            padding: 6px 12px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .implementation-time {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #718096;
+            font-size: 0.9em;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .benefit-box {
+            background: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .benefit-box strong {
+            color: #234e52;
+        }
+
+        @media (max-width: 768px) {
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>📚 Document Helper RAG Chatbot</h1>
+            <p>Basic Use Cases with Clear Personas & Implementation Approaches</p>
+        </div>
+
+        <div class="content">
+            <div class="section-header">
+                <h2>🟢 Basic Use Cases</h2>
+                <p>Quick implementation • Single document type • Clear personas</p>
+            </div>
+
+            <div class="use-cases-grid">
+                <!-- Use Case 1: HR/Employee focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">📋 Company Policy FAQ Bot</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">👥</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">HR Managers</span>
+                            <span class="role-tag">New Employees</span>
+                            <span class="role-tag">Team Leaders</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Help employees quickly find answers about company policies without bothering HR. HR can update once, answer thousands of times.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Single employee handbook PDF<br>
+                            <strong>Chunking Strategy:</strong> Split by policy sections (1-2 paragraphs)<br>
+                            <strong>Enhancement:</strong> Add page citations for easy reference
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> Reduces HR team workload by 60% on repetitive policy questions
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>24/7 instant policy answers</li>
+                            <li>Page number citations for verification</li>
+                            <li>Multi-language support option</li>
+                            <li>Track most asked questions</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"What is the work from home policy?"</div>
+                        <div class="query">"How do I request vacation days?"</div>
+                        <div class="query">"What's the dress code for client meetings?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, DOCX</span>
+                        <span class="tech-tag">Paragraph Chunking</span>
+                        <span class="tech-tag">Citation Enabled</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 1-2 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 2: Customer Support focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">🛠️ Technical Support Assistant</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">🎧</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">Support Agents</span>
+                            <span class="role-tag">End Customers</span>
+                            <span class="role-tag">Field Technicians</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Empower customers to self-solve issues and help support agents find solutions faster from product manuals and troubleshooting guides.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Product manuals + FAQ documents<br>
+                            <strong>Chunking Strategy:</strong> Section-based (each troubleshooting step)<br>
+                            <strong>Enhancement:</strong> Priority ranking for common issues
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> Reduces support ticket volume by 40%, improves first-call resolution
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Step-by-step troubleshooting flows</li>
+                            <li>Visual diagram references</li>
+                            <li>Error code lookup</li>
+                            <li>Escalation trigger when needed</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"Device won't turn on, what should I check?"</div>
+                        <div class="query">"Error code E502 - what does it mean?"</div>
+                        <div class="query">"How to connect to WiFi network?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF Manual</span>
+                        <span class="tech-tag">Section Chunking</span>
+                        <span class="tech-tag">Self-Service</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 1-2 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 3: Sales Team focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">💼 Sales Battlecard Assistant</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">📊</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">Sales Reps</span>
+                            <span class="role-tag">Account Executives</span>
+                            <span class="role-tag">Sales Engineers</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Give sales teams instant access to product features, competitive differentiators, and objection handling during live calls or meetings.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Sales battlecards + product sheets<br>
+                            <strong>Chunking Strategy:</strong> Feature-based chunks<br>
+                            <strong>Enhancement:</strong> Quick-answer format optimization
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> Faster deal closing, 30% improvement in objection handling
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Competitive comparison lookup</li>
+                            <li>Feature-to-benefit mapping</li>
+                            <li>Common objection responses</li>
+                            <li>Pricing tier explanations</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"How do we compare to Competitor X on security?"</div>
+                        <div class="query">"What's our response to 'too expensive' objection?"</div>
+                        <div class="query">"Key features for healthcare industry?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, DOCX</span>
+                        <span class="tech-tag">Feature Chunking</span>
+                        <span class="tech-tag">Mobile Optimized</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 2 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 4: Training/Onboarding focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">🎓 Onboarding Buddy Bot</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">🆕</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">New Hires</span>
+                            <span class="role-tag">Hiring Managers</span>
+                            <span class="role-tag">L&D Teams</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Guide new employees through their first weeks with instant access to onboarding materials, reducing anxiety and improving retention.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Onboarding checklist + welcome guide<br>
+                            <strong>Chunking Strategy:</strong> Day-by-day or task-based<br>
+                            <strong>Enhancement:</strong> Progressive disclosure by week
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> 50% faster onboarding, higher new hire satisfaction scores
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Week-by-week task guidance</li>
+                            <li>Key contact directory lookup</li>
+                            <li>System access instructions</li>
+                            <li>Cultural norms and etiquette</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"What do I need to complete in my first week?"</div>
+                        <div class="query">"How do I set up my email account?"</div>
+                        <div class="query">"Who should I meet in my first month?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, TXT</span>
+                        <span class="tech-tag">Task Chunking</span>
+                        <span class="tech-tag">Progress Tracking</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 1-2 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 5: Healthcare focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">🏥 Patient Discharge Guide</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">🩺</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">Patients</span>
+                            <span class="role-tag">Caregivers</span>
+                            <span class="role-tag">Nurses</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Help patients understand post-discharge care instructions in simple language, reducing readmission rates and improving recovery.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Discharge instruction templates<br>
+                            <strong>Chunking Strategy:</strong> Care instruction blocks<br>
+                            <strong>Enhancement:</strong> Plain language conversion
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> 25% reduction in post-discharge confusion calls
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Medication schedule reminders</li>
+                            <li>Activity restriction clarification</li>
+                            <li>Warning sign identification</li>
+                            <li>Follow-up appointment prep</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"What activities should I avoid after surgery?"</div>
+                        <div class="query">"How do I take this medication?"</div>
+                        <div class="query">"When should I call the doctor?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, DOCX</span>
+                        <span class="tech-tag">Instruction Chunking</span>
+                        <span class="tech-tag">HIPAA Compliant</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 2-3 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 6: Education focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">📝 Assignment Helper Bot</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">👨‍🎓</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">Students</span>
+                            <span class="role-tag">Teachers</span>
+                            <span class="role-tag">Parents</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Students can quickly reference course syllabi, assignment requirements, and grading rubrics without constantly asking the teacher.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Course syllabus + assignment sheets<br>
+                            <strong>Chunking Strategy:</strong> Assignment-based chunks<br>
+                            <strong>Enhancement:</strong> Due date extraction and reminders
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> Reduces "I didn't know" excuses, improves assignment completion
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Deadline and requirement lookup</li>
+                            <li>Grading criteria breakdown</li>
+                            <li>Required materials checklist</li>
+                            <li>Submission format guidance</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"When is the final project due?"</div>
+                        <div class="query">"What format should my essay be in?"</div>
+                        <div class="query">"How much is the group presentation worth?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, DOCX</span>
+                        <span class="tech-tag">Section Chunking</span>
+                        <span class="tech-tag">Student Friendly</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 1-2 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 7: Legal/Compliance focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">⚖️ Contract Terms Explainer</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">📄</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">Employees</span>
+                            <span class="role-tag">Vendors</span>
+                            <span class="role-tag">Procurement Teams</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Help non-legal staff understand standard contract terms and obligations without needing constant lawyer consultations.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Standard contract template + glossary<br>
+                            <strong>Chunking Strategy:</strong> Clause-based chunks<br>
+                            <strong>Enhancement:</strong> Plain language explanations
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> Speeds up contract reviews by 70% for standard terms
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Clause explanation in simple terms</li>
+                            <li>Key obligation identification</li>
+                            <li>Standard vs non-standard flagging</li>
+                            <li>Renewal term lookup</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"What does the indemnification clause mean?"</div>
+                        <div class="query">"When can we terminate this agreement?"</div>
+                        <div class="query">"What are our payment obligations?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, DOCX</span>
+                        <span class="tech-tag">Clause Chunking</span>
+                        <span class="tech-tag">Glossary Enhanced</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong> 2 hours</span>
+                    </div>
+                </div>
+
+                <!-- Use Case 8: Operations focused -->
+                <div class="use-case-card">
+                    <div class="card-header">
+                        <div class="card-title">🏭 Safety Protocol Assistant</div>
+                    </div>
+                    
+                    <div class="persona-section">
+                        <div class="persona-header">
+                            <span class="persona-icon">🦺</span>
+                            <span class="persona-title">Primary Users</span>
+                        </div>
+                        <div class="persona-roles">
+                            <span class="role-tag">Floor Workers</span>
+                            <span class="role-tag">Safety Officers</span>
+                            <span class="role-tag">Supervisors</span>
+                        </div>
+                    </div>
+
+                    <div class="card-description">
+                        Quick access to safety procedures and emergency protocols for manufacturing, warehouse, or construction workers on the floor.
+                    </div>
+
+                    <div class="approach-section">
+                        <div class="approach-title">🎯 Implementation Approach</div>
+                        <div class="approach-content">
+                            <strong>Document Structure:</strong> Safety handbook + SOPs<br>
+                            <strong>Chunking Strategy:</strong> Procedure-based chunks<br>
+                            <strong>Enhancement:</strong> Emergency keyword prioritization
+                        </div>
+                    </div>
+
+                    <div class="benefit-box">
+                        <strong>💡 Key Benefit:</strong> Faster emergency response, improved safety compliance
+                    </div>
+
+                    <div class="features-list">
+                        <div class="features-title">Features</div>
+                        <ul>
+                            <li>Emergency procedure quick access</li>
+                            <li>PPE requirement lookup by task</li>
+                            <li>Incident reporting steps</li>
+                            <li>Hazard identification guide</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-queries">
+                        <div class="example-queries-title">Example Queries</div>
+                        <div class="query">"What PPE do I need for welding?"</div>
+                        <div class="query">"What do I do if there's a chemical spill?"</div>
+                        <div class="query">"How do I report a safety incident?"</div>
+                    </div>
+
+                    <div class="tech-specs">
+                        <span class="tech-tag">PDF, TXT</span>
+                        <span class="tech-tag">Procedure Chunking</span>
+                        <span class="tech-tag">Mobile Access</span>
+                    </div>
+
+                    <div class="implementation-time">
+                        <span>⏱️</span>
+                        <span><strong>Implementation:</strong

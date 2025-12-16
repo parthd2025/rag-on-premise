@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Helper RAG Chatbot - Use Cases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 15s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .filter-nav {
+            background: #f8f9fa;
+            padding: 25px 40px;
+            border-bottom: 3px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-weight: 700;
+            color: #4a5568;
+            font-size: 1.1em;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .complexity-section {
+            margin-bottom: 60px;
+        }
+
+        .complexity-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 4px solid;
+        }
+
+        .complexity-header.basic {
+            border-color: #48bb78;
+        }
+
+        .complexity-header.moderate {
+            border-color: #ed8936;
+        }
+
+        .complexity-header.complex {
+            border-color: #f56565;
+        }
+
+        .complexity-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+        }
+
+        .complexity-icon.basic {
+            background: #48bb78;
+        }
+
+        .complexity-icon.moderate {
+            background: #ed8936;
+        }
+
+        .complexity-icon.complex {
+            background: #f56565;
+        }
+
+        .complexity-title {
+            font-size: 2.2em;
+            font-weight: 800;
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .use-case-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .use-case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .use-case-card.basic::before {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+        }
+
+        .use-case-card.moderate::before {
+            background: linear-gradient(90deg, #ed8936, #dd6b20);
+        }
+
+        .use-case-card.complex::before {
+            background: linear-gradient(90deg, #f56565, #e53e3e);
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .difficulty-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .difficulty-badge.basic {
+            background: #48bb78;
+        }
+
+        .difficulty-badge.moderate {
+            background: #ed8936;
+        }
+
+        .difficulty-badge.complex {
+            background: #f56565;
+        }
+
+        .card-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            font-size: 0.95em;
+        }
+
+        .features-list {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .features-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .features-list ul {
+            margin-left: 20px;
+            color: #4a5568;
+        }
+
+        .features-list li {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .tech-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag {
+            padding: 6px 12px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tech-tag.file {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .tech-tag.chunking {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .example-queries {
+            background: #edf2f7;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .example-queries-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .query {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        .implementation-time {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #718096;
+            font-size: 0.9em;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .time-icon {
+            font-size: 1.2em;
+        }
+
+        .download-section {
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .download-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .download-btn {
+            padding: 18px 45px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            margin: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            padding: 40px;
+            background: #f7fafc;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .filter-nav {
+                padding: 20px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .filter-nav, .download-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>📚 Document Helper RAG Chatbot</h1>
+            <p>Comprehensive Use Cases: From Basic to Advanced Implementations</p>
+        </div>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Use Cases</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Industries Covered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5+</div>
+                <div class="stat-label">File Types Supported</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Production Ready</div>
+            </div>
+        </div>
+
+        <div class="filter-nav">
+            <span class="filter-label">Filter by Complexity:</span>
+            <button class="filter-btn active" onclick="filterCases('all')">All Use Cases</button>
+            <button class="filter-btn" onclick="filterCases('basic')">🟢 Basic</button>
+            <button class="filter-btn" onclick="filterCases('moderate')">🟠 Moderate</button>
+            <button class="filter-btn" onclick="filterCases('complex')">🔴 Complex</button>
+        </div>
+
+        <div class="content">
+            <!-- BASIC USE CASES -->
+            <div class="complexity-section" data-complexity="basic">
+                <div class="complexity-header basic">
+                    <div class="complexity-icon basic">🟢</div>
+                    <div>
+                        <div class="complexity-title">Basic Use Cases</div>
+                        <p style="color: #718096;">Quick implementation • Single document type • Straightforward queries</p>
+                    </div>
+                </div>
+
+                <div class="use-cases-grid">
+                    <!-- Use Case 1 -->
+                    <div class="use-case-card basic">
+                        <div class="card-header">
+                            <div class="card-title">📋 Company Policy FAQ Bot</div>
+                            <span class="difficulty-badge basic">Basic</span>
+                        </div>
+                        <div class="card-description">
+                            A simple chatbot that answers employee questions about company policies from a single employee handbook or policy document.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Single PDF/DOCX document processing</li>
+                                <li>Simple Q&A format responses</li>
+                                <li>Page number citations</li>
+                                <li>Basic keyword search enhancement</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX</span>
+                            <span class="tech-tag chunking">Paragraph-based</span>
+                            <span class="tech-tag">RAG Pipeline</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What is the company's work from home policy?"</div>
+                            <div class="query">"How many vacation days do I get?"</div>
+                            <div class="query">"What's the dress code policy?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 1-2 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 2 -->
+                    <div class="use-case-card basic">
+                        <div class="card-header">
+                            <div class="card-title">📖 Product Manual Assistant</div>
+                            <span class="difficulty-badge basic">Basic</span>
+                        </div>
+                        <div class="card-description">
+                            Help customers find answers in product manuals and user guides quickly without reading the entire document.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Troubleshooting guide navigation</li>
+                                <li>Step-by-step instruction retrieval</li>
+                                <li>Feature explanation lookup</li>
+                                <li>Warranty and support information</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF</span>
+                            <span class="tech-tag chunking">Section-based</span>
+                            <span class="tech-tag">Customer Support</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"How do I reset my device to factory settings?"</div>
+                            <div class="query">"What warranty coverage do I have?"</div>
+                            <div class="query">"How to connect via Bluetooth?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 1-2 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 3 -->
+                    <div class="use-case-card basic">
+                        <div class="card-header">
+                            <div class="card-title">📚 Training Material Assistant</div>
+                            <span class="difficulty-badge basic">Basic</span>
+                        </div>
+                        <div class="card-description">
+                            Help new employees or trainees quickly find information from training manuals and onboarding documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Onboarding checklist queries</li>
+                                <li>Training module content search</li>
+                                <li>Quick reference for procedures</li>
+                                <li>Learning path recommendations</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, TXT</span>
+                            <span class="tech-tag chunking">Paragraph-based</span>
+                            <span class="tech-tag">HR/Training</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What do I need to complete in my first week?"</div>
+                            <div class="query">"Where can I find the safety training materials?"</div>
+                            <div class="query">"Who is my training coordinator?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 1-2 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 4 -->
+                    <div class="use-case-card basic">
+                        <div class="card-header">
+                            <div class="card-title">🏥 Patient Education Bot</div>
+                            <span class="difficulty-badge basic">Basic</span>
+                        </div>
+                        <div class="card-description">
+                            Provide patients with easy-to-understand information about their conditions, treatments, and post-care instructions.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Discharge instruction queries</li>
+                                <li>Medication information in simple language</li>
+                                <li>Diet and exercise recommendations</li>
+                                <li>Follow-up care guidelines</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX</span>
+                            <span class="tech-tag chunking">Paragraph-based</span>
+                            <span class="tech-tag">Healthcare</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What should I eat after surgery?"</div>
+                            <div class="query">"When can I return to work?"</div>
+                            <div class="query">"How do I take my prescribed medication?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 2-3 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 5 -->
+                    <div class="use-case-card basic">
+                        <div class="card-header">
+                            <div class="card-title">🎓 Course Syllabus Helper</div>
+                            <span class="difficulty-badge basic">Basic</span>
+                        </div>
+                        <div class="card-description">
+                            Students can quickly find information about course requirements, schedules, and grading policies from syllabus documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Assignment deadline lookup</li>
+                                <li>Grading criteria explanations</li>
+                                <li>Required reading lists</li>
+                                <li>Office hours and contact info</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX</span>
+                            <span class="tech-tag chunking">Section-based</span>
+                            <span class="tech-tag">Education</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"When is the midterm exam?"</div>
+                            <div class="query">"What percentage is the final project worth?"</div>
+                            <div class="query">"What textbooks do I need?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 1-2 hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMPLEX USE CASES -->
+            <div class="complexity-section" data-complexity="complex">
+                <div class="complexity-header complex">
+                    <div class="complexity-icon complex">🔴</div>
+                    <div>
+                        <div class="complexity-title">Complex Use Cases</div>
+                        <p style="color: #718096;">Advanced features • Multi-source synthesis • Domain expertise required</p>
+                    </div>
+                </div>
+
+                <div class="use-cases-grid">
+                    <!-- Use Case 11 -->
+                    <div class="use-case-card complex">
+                        <div class="card-header">
+                            <div class="card-title">⚖️ Legal Contract Analysis System</div>
+                            <span class="difficulty-badge complex">Complex</span>
+                        </div>
+                        <div class="card-description">
+                            Analyze and compare multiple legal contracts, extract specific clauses, identify risks, and provide compliance checking across vendor agreements, NDAs, and employment contracts.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Multi-contract clause comparison</li>
+                                <li>Risk identification and highlighting</li>
+                                <li>Compliance template checking</li>
+                                <li>Obligation and liability extraction</li>
+                                <li>Contract version comparison</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX</span>
+                            <span class="tech-tag chunking">Section + Semantic</span>
+                            <span class="tech-tag">Legal</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"Find all contracts with liability caps below $1M"</div>
+                            <div class="query">"Compare termination clauses across all vendor agreements"</div>
+                            <div class="query">"What are the payment terms in contracts signed in 2024?"</div>
+                            <div class="query">"Identify non-standard indemnification clauses"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 6-8 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 12 -->
+                    <div class="use-case-card complex">
+                        <div class="card-header">
+                            <div class="card-title">🏥 Clinical Protocol & Medical Research Assistant</div>
+                            <span class="difficulty-badge complex">Complex</span>
+                        </div>
+                        <div class="card-description">
+                            HIPAA-compliant system for medical professionals to access clinical protocols, medication guidelines, research papers, and treatment procedures with safety verification.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Emergency protocol fast retrieval</li>
+                                <li>Medication dosage verification with confidence scores</li>
+                                <li>Drug interaction checking across documents</li>
+                                <li>Protocol version tracking (latest only)</li>
+                                <li>Research paper synthesis</li>
+                                <li>Audit logging for compliance</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, Excel, DOCX</span>
+                            <span class="tech-tag chunking">Sliding Window</span>
+                            <span class="tech-tag">Healthcare</span>
+                            <span class="tech-tag">HIPAA</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What's the cardiac arrest protocol in ICU?"</div>
+                            <div class="query">"Show medication dosage for drug X in diabetic patients"</div>
+                            <div class="query">"Compare pre-op protocols for knee vs hip surgery"</div>
+                            <div class="query">"What are contraindications for this medication?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 8-10 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 13 -->
+                    <div class="use-case-card complex">
+                        <div class="card-header">
+                            <div class="card-title">📊 Financial Audit & Compliance Analyzer</div>
+                            <span class="difficulty-badge complex">Complex</span>
+                        </div>
+                        <div class="card-description">
+                            Cross-check financial statements, transaction logs, audit reports, and compliance documents to identify discrepancies and ensure regulatory compliance.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Cross-document discrepancy detection</li>
+                                <li>Transaction vs policy compliance checking</li>
+                                <li>Multi-year trend analysis</li>
+                                <li>Regulatory requirement verification</li>
+                                <li>Automated risk assessment scoring</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">Excel, CSV, PDF</span>
+                            <span class="tech-tag chunking">Metadata-aware</span>
+                            <span class="tech-tag">Finance</span>
+                            <span class="tech-tag">Compliance</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"Are there discrepancies between financial statements and transaction logs?"</div>
+                            <div class="query">"Verify Q4 transactions comply with expense policy"</div>
+                            <div class="query">"Identify high-risk audit findings from last 3 years"</div>
+                            <div class="query">"Does our data handling comply with SOX requirements?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 8-10 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 14 -->
+                    <div class="use-case-card complex">
+                        <div class="card-header">
+                            <div class="card-title">🔬 Research Paper Literature Review System</div>
+                            <span class="difficulty-badge complex">Complex</span>
+                        </div>
+                        <div class="card-description">
+                            Synthesize information from multiple academic papers, compare methodologies, identify research gaps, and extract key findings across 50+ research documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Multi-paper synthesis and comparison</li>
+                                <li>Methodology extraction and analysis</li>
+                                <li>Citation network mapping</li>
+                                <li>Research gap identification</li>
+                                <li>Statistical results aggregation</li>
+                                <li>Contradiction detection</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, TXT</span>
+                            <span class="tech-tag chunking">Semantic</span>
+                            <span class="tech-tag">Academic</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What methodologies were used in transformer architecture papers?"</div>
+                            <div class="query">"Compare findings on climate change impact from last 20 papers"</div>
+                            <div class="query">"What are the research gaps in quantum computing?"</div>
+                            <div class="query">"Synthesize all studies on drug efficacy published 2020-2024"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 10-12 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 15 -->
+                    <div class="use-case-card complex">
+                        <div class="card-header">
+                            <div class="card-title">🏢 M&A Due Diligence Intelligence System</div>
+                            <span class="difficulty-badge complex">Complex</span>
+                        </div>
+                        <div class="card-description">
+                            Comprehensive analysis across financial statements, legal contracts, IP portfolios, employee agreements, and market research for mergers and acquisitions.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Multi-document risk analysis</li>
+                                <li>Asset valuation synthesis</li>
+                                <li>Legal obligation extraction</li>
+                                <li>Market position comparison</li>
+                                <li>Red flag identification</li>
+                                <li>Scenario analysis support</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">All formats</span>
+                            <span class="tech-tag chunking">Semantic + Section</span>
+                            <span class="tech-tag">M&A</span>
+                            <span class="tech-tag">Enterprise</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What are key risks across all due diligence documents?"</div>
+                            <div class="query">"Compare target company revenue growth vs market average"</div>
+                            <div class="query">"List all pending litigations and contractual obligations"</div>
+                            <div class="query">"What IP assets are included in the acquisition?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 12-15 hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h2>📥 Ready to Implement?</h2>
+            <p style="margin-bottom: 30px; font-size: 1.1em;">Download this guide or print for your team</p>
+            <button class="download-btn" onclick="window.print()">🖨️ Print Guide</button>
+            <button class="download-btn" onclick="downloadHTML()">⬇️ Download HTML</button>
+        </div>
+    </div>
+
+    <script>
+        function filterCases(complexity) {
+            const sections = document.querySelectorAll('.complexity-section');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (complexity === 'all') {
+                sections.forEach(section => section.style.display = 'block');
+            } else {
+                sections.forEach(section => {
+                    if (section.getAttribute('data-complexity') === complexity) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+            
+            window.scrollTo({ top: document.querySelector('.content').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function downloadHTML() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Document_Helper_RAG_Use_Cases.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Smooth scroll to section
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.use-case-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
+            <div class="complexity-section" data-complexity="moderate">
+                <div class="complexity-header moderate">
+                    <div class="complexity-icon moderate">🟠</div>
+                    <div>
+                        <div class="complexity-title">Moderate Use Cases</div>
+                        <p style="color: #718096;">Multiple documents • Mixed file types • Comparative queries</p>
+                    </div>
+                </div>
+
+                <div class="use-cases-grid">
+                    <!-- Use Case 6 -->
+                    <div class="use-case-card moderate">
+                        <div class="card-header">
+                            <div class="card-title">💼 HR Benefits Comparison Bot</div>
+                            <span class="difficulty-badge moderate">Moderate</span>
+                        </div>
+                        <div class="card-description">
+                            Compare benefits across different employee levels, departments, or policy versions from multiple HR documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Multi-document comparison queries</li>
+                                <li>Excel benefits table processing</li>
+                                <li>Leave balance calculations</li>
+                                <li>Benefits eligibility checking</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX, Excel</span>
+                            <span class="tech-tag chunking">Metadata-aware</span>
+                            <span class="tech-tag">Multi-doc</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"Compare health insurance options for Level 3 vs Level 4 employees"</div>
+                            <div class="query">"What benefits am I eligible for as a contract employee?"</div>
+                            <div class="query">"How much parental leave do managers get?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 3-4 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 7 -->
+                    <div class="use-case-card moderate">
+                        <div class="card-header">
+                            <div class="card-title">🏪 Restaurant Menu & Recipe Bot</div>
+                            <span class="difficulty-badge moderate">Moderate</span>
+                        </div>
+                        <div class="card-description">
+                            Help kitchen staff quickly access recipes, ingredient lists, and preparation procedures from multiple recipe documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Recipe search by ingredient</li>
+                                <li>Allergen information extraction</li>
+                                <li>Preparation time and serving size</li>
+                                <li>Substitute ingredient suggestions</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX, CSV</span>
+                            <span class="tech-tag chunking">Section-based</span>
+                            <span class="tech-tag">Hospitality</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"Show me all recipes using chicken and mushrooms"</div>
+                            <div class="query">"What dishes are gluten-free?"</div>
+                            <div class="query">"How do I prepare the special weekend brunch item?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 3-4 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 8 -->
+                    <div class="use-case-card moderate">
+                        <div class="card-header">
+                            <div class="card-title">📊 Sales Proposal Assistant</div>
+                            <span class="difficulty-badge moderate">Moderate</span>
+                        </div>
+                        <div class="card-description">
+                            Help sales teams quickly access product information, pricing, case studies, and competitive intelligence from multiple sources.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Product specs and pricing lookup</li>
+                                <li>Case study recommendations by industry</li>
+                                <li>Competitor comparison data</li>
+                                <li>Custom proposal content generation</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, Excel, DOCX</span>
+                            <span class="tech-tag chunking">Recursive</span>
+                            <span class="tech-tag">Sales</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What's our pricing for Enterprise plan with 500 users?"</div>
+                            <div class="query">"Show me healthcare industry case studies"</div>
+                            <div class="query">"How do our features compare to Competitor X?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 4-5 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 9 -->
+                    <div class="use-case-card moderate">
+                        <div class="card-header">
+                            <div class="card-title">🏭 Manufacturing SOP Navigator</div>
+                            <span class="difficulty-badge moderate">Moderate</span>
+                        </div>
+                        <div class="card-description">
+                            Guide operators through standard operating procedures, quality checks, and safety protocols from multiple SOP documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Step-by-step procedure guidance</li>
+                                <li>Quality control checklist access</li>
+                                <li>Safety protocol quick reference</li>
+                                <li>Equipment troubleshooting steps</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, DOCX, Excel</span>
+                            <span class="tech-tag chunking">Section-based</span>
+                            <span class="tech-tag">Manufacturing</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"What are the calibration steps for Machine A?"</div>
+                            <div class="query">"Show quality control criteria for Product X"</div>
+                            <div class="query">"What PPE is required for this process?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 4-5 hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Use Case 10 -->
+                    <div class="use-case-card moderate">
+                        <div class="card-header">
+                            <div class="card-title">🏦 Banking Product Advisor</div>
+                            <span class="difficulty-badge moderate">Moderate</span>
+                        </div>
+                        <div class="card-description">
+                            Help customers and bank staff understand loan products, account types, interest rates, and eligibility criteria from multiple banking documents.
+                        </div>
+                        <div class="features-list">
+                            <div class="features-title">Key Features</div>
+                            <ul>
+                                <li>Product comparison (savings, loans, cards)</li>
+                                <li>Interest rate and fee calculations</li>
+                                <li>Eligibility requirement checks</li>
+                                <li>Document checklist for applications</li>
+                            </ul>
+                        </div>
+                        <div class="tech-specs">
+                            <span class="tech-tag file">PDF, Excel, DOCX</span>
+                            <span class="tech-tag chunking">Metadata-aware</span>
+                            <span class="tech-tag">Finance</span>
+                        </div>
+                        <div class="example-queries">
+                            <div class="example-queries-title">Example Queries</div>
+                            <div class="query">"Compare interest rates for home loans vs personal loans"</div>
+                            <div class="query">"What documents do I need for a business account?"</div>
+                            <div class="query">"Am I eligible for a premium credit card?"</div>
+                        </div>
+                        <div class="implementation-time">
+                            <span class="time-icon">⏱️</span>
+                            <span><strong>Implementation:</strong> 4-5 hours</span>
+                        </div>
+                    </div>

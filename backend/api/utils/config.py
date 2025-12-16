@@ -62,8 +62,8 @@ class Settings(BaseSettings):
     chunk_overlap: int = Field(default=50, ge=0, le=200, description="Chunk overlap in tokens")
     
     # RAG settings
-    top_k: int = Field(default=5, ge=1, le=50, description="Number of top results to retrieve")
-    similarity_threshold: float = Field(default=0.5, ge=0.0, le=1.0, description="Minimum similarity score")
+    top_k: int = Field(default=3, ge=1, le=50, description="Number of top results to retrieve")
+    similarity_threshold: float = Field(default=0.2, ge=0.0, le=1.0, description="Minimum similarity score")
     
     # Document storage
     upload_dir: str = "./uploads"

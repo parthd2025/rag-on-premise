@@ -134,7 +134,9 @@ class VectorStore:
                         "text": results['documents'][0][i],
                         "metadata": results['metadatas'][0][i],
                         "distance": results['distances'][0][i] if 'distances' in results else None,
-                        "score": 1 - results['distances'][0][i] if 'distances' in results else None
+                        # Convert distance to similarity score in [0, 1] range
+                        # 1 / (1 + distance) is a standard soft conversion
+                        "score": 1 / (1 + results['distances'][0][i]) if 'distances' in results else 0.0
                     }
                     formatted_results.append(result)
             

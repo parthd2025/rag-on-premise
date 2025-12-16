@@ -6,6 +6,7 @@ import requests
 import json
 import time
 import threading
+import re
 from typing import Iterator, Dict, Any, Optional
 from api.utils.config import settings
 from api.utils.logger import get_logger
@@ -33,7 +34,7 @@ def _load_local_model():
             model_id = settings.local_model_id
             device = settings.local_device
             
-            logger.info(f"Loading local model: {model_id} (device={device})")
+            logger.info(f"Loading Generation LLM: {model_id} (device={device})")
             
             _local_tokenizer = AutoTokenizer.from_pretrained(model_id)
             
@@ -208,6 +209,9 @@ class GenerationService:
         # Local transformers doesn't have native streaming, so we generate and yield chunks
         response = self._generate_with_local_transformers(prompt, max_tokens, temperature)
         
+        # Filter out <think> blocks
+        response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
+        
         # Yield in word-sized chunks for better UX
         words = response.split(' ')
         for i, word in enumerate(words):
@@ -219,6 +223,7 @@ class GenerationService:
         """Build the RAG prompt"""
         prompt = f"""You are a helpful assistant. Use the provided context to answer the question.
 If the answer cannot be determined from context, say you don't know.
+Provide a clear and structured answer. Use paragraphs for general explanations, definitions, or summaries. Use bullet points ONLY when listing items, steps, advantages/disadvantages, or key components. Keep your response concise and ensure it is complete within 512 tokens.
 
 Context:
 {context}
@@ -227,6 +232,33 @@ Question: {question}
 
 Answer:"""
         return prompt
+
+    def _ensure_complete_sentence(self, text: str) -> str:
+        """Ensure text ends with a complete sentence"""
+        if not text:
+            return text
+        
+        # If text ends with terminal punctuation, it's likely fine
+        if text.strip()[-1] in ['.', '!', '?', '"', "'"]:
+            return text
+            
+        # Find the last sentence terminator
+        # Look for . ! ? followed by space or end of string
+        match = re.search(r'(.*[.!?])\s*$', text, re.DOTALL)
+        if match:
+            return match.group(1)
+            
+        # Also try simpler rfind if regex fails or for safety
+        last_period = text.rfind('.')
+        last_exclaim = text.rfind('!')
+        last_question = text.rfind('?')
+        
+        cutoff = max(last_period, last_exclaim, last_question)
+        
+        if cutoff > 0:
+            return text[:cutoff+1]
+            
+        return text
     
     def generate_stream(self, prompt: str, max_tokens: int = 512, temperature: float = 0.7) -> Iterator[str]:
         """Generate streaming response with fallback chain: vLLM -> Ollama -> local transformers"""
@@ -286,6 +318,8 @@ Answer:"""
                                     choice = data['choices'][0]
                                     # vLLM OpenAI API format
                                     if 'text' in choice:
+                                        # Filter <think> logic for streaming is complex, usually handled by client or specialized parser
+                                        # For now, we assume vLLM/Ollama are handling standard instruct models without CoT exposure or user is ok with it
                                         yield choice['text']
                                     elif 'delta' in choice:
                                         delta = choice['delta']
@@ -327,7 +361,7 @@ Answer:"""
         # Try Ollama first (fastest on Windows)
         if self.use_ollama and self._check_ollama_connection():
             logger.info("Using Ollama for generation")
-            return self._generate_with_ollama(prompt, max_tokens, temperature)
+            return self._ensure_complete_sentence(self._generate_with_ollama(prompt, max_tokens, temperature))
         
         # Try vLLM
         if self.enabled and self._check_vllm_connection():
@@ -335,7 +369,7 @@ Answer:"""
             # Continue to vLLM logic below
         elif self.use_local_transformers:
             logger.info("Using local transformers for generation")
-            return self._generate_with_local_transformers(prompt, max_tokens, temperature)
+            return self._ensure_complete_sentence(self._generate_with_local_transformers(prompt, max_tokens, temperature))
         elif not self.enabled or not self._check_vllm_connection():
             logger.warning("No LLM service available")
             return self._generate_fallback(prompt)
@@ -362,7 +396,7 @@ Answer:"""
                 result = response.json()
                 
                 if 'choices' in result and len(result['choices']) > 0:
-                    return result['choices'][0]['text'].strip()
+                    return self._ensure_complete_sentence(result['choices'][0]['text'].strip())
                 
                 return "Error: No response from model"
                 
